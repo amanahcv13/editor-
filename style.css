@@ -70,7 +70,7 @@ body {
     }
     /* Tambahkan pengecekan agar zoom tidak aktif saat print */
     .page { 
-        zoom: 0.42 !important; 
+        zoom: 1 !important; 
         margin: 0 auto 10px auto !important; 
     }
 }
