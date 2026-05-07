@@ -1,0 +1,760 @@
+:root { 
+    --primary: #4f46e5; 
+    --bg-app: #f1f5f9; 
+    --sidebar-bg: #ffffff; 
+    --border: #e2e8f0; 
+    --radius: 16px; 
+    --page-w: 210mm; 
+    --page-h: 297mm; 
+}
+
+body { 
+    font-family: 'Plus Jakarta Sans', sans-serif; 
+    background: var(--bg-app); 
+    overflow-x: hidden; 
+}
+
+.editor-sidebar { 
+    width: 460px; 
+    background: var(--sidebar-bg); 
+    border-right: 1px solid var(--border); 
+    display: flex; 
+    flex-direction: column; 
+    flex-shrink: 0; 
+    z-index: 50; 
+}
+
+.custom-checkbox { 
+    position: relative; 
+    width: 22px; 
+    height: 22px; 
+    cursor: pointer; 
+    appearance: none; 
+    border: 2.5px solid #cbd5e1; 
+    border-radius: 7px; 
+    transition: all 0.2s; 
+    background: white; 
+    flex-shrink: 0; 
+}
+
+.custom-checkbox:checked { 
+    background: var(--primary); 
+    border-color: var(--primary); 
+}
+
+.custom-checkbox:checked::after { 
+    content: '✓'; 
+    position: absolute; 
+    color: white; 
+    font-size: 14px; 
+    left: 4px; 
+    top: -1px; 
+    font-weight: 900; 
+}
+
+@media screen and (max-width: 1024px) {
+    .editor-sidebar { 
+        width: 100%; 
+        position: absolute; 
+        height: calc(100% - 75px); 
+        top: 0; left: 0; 
+    }
+    .preview-pane { 
+        width: 100% !important; 
+        height: calc(100% - 75px); 
+        position: absolute; 
+        top: 0; left: 0; 
+        padding: 20px 10px !important; 
+        display: none; 
+        background: #334155 !important; 
+    }
+    /* Tambahkan pengecekan agar zoom tidak aktif saat print */
+    .page { 
+        zoom: 0.42 !important; 
+        margin: 0 auto 10px auto !important; 
+    }
+}
+
+.nav-tabs { display: flex; padding: 12px; gap: 8px; background: #f8fafc; border-bottom: 1px solid var(--border); }
+.nav-btn { flex: 1; padding: 12px; border: none; background: transparent; font-size: 0.75rem; font-weight: 800; cursor: pointer; border-radius: 12px; color: #64748b; text-transform: uppercase; transition: 0.2s; }
+.nav-btn.active { background: white; color: var(--primary); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.scroll-area { flex: 1; overflow-y: auto; padding: 24px; padding-bottom: 120px; }
+.label { font-size: 0.7rem; font-weight: 800; color: #94a3b8; text-transform: uppercase; display: block; margin-bottom: 4px; margin-top: 12px; }
+.input-desc { font-size: 0.65rem; color: #64748b; margin-bottom: 8px; display: block; font-style: italic; line-height: 1.2; }
+.input-ui { width: 100%; padding: 12px; border: 1.5px solid var(--border); border-radius: 12px; font-size: 0.85rem; margin-bottom: 10px; outline: none; transition: 0.2s; }
+.card-item { background: #f8fafc; border: 1px solid var(--border); padding: 15px; border-radius: 14px; margin-bottom: 15px; position: relative; }
+
+.preview-pane { flex: 1; background: #334155; overflow-y: auto; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+.page.cv-page { width: var(--page-w); min-height: var(--page-h); background: white; padding: 10mm 18mm 18mm 18mm; margin-bottom: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); position: relative; overflow: hidden; }
+.page.surat-page { width: var(--page-w); min-height: var(--page-h); background: white; padding: 25mm 25mm 25mm 25mm; margin-bottom: 30px; box-shadow: 0 25px 50px rgba(0,0,0,0.25); position: relative; overflow: hidden; }
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.vessel { font-size: 11pt; line-height: 1.3; color: #1e293b; position: relative; z-index: 10; animation: fadeIn 0.5s ease; }
+.cv-page .vessel > *:first-child { margin-top: 0 !important; }
+.section-title { font-size: 11pt; font-weight: 800; text-transform: uppercase; background: #f1f5f9; padding: 4px 12px; margin: 10px 0 6px; color: #000000; border-left: 4px solid var(--primary); letter-spacing: 1px; }
+
+/* Update di style.css */
+/* Update di style.css */
+.cv-list li { 
+    position: relative; 
+    margin-bottom: 2px; 
+    text-align: justify; 
+    /* Solusi Utama: */
+    text-justify: inter-character; /* Mendistribusikan spasi antar karakter, bukan cuma antar kata */
+    hyphens: auto;                /* Memotong kata secara otomatis dengan tanda hubung (-) */
+    word-break: break-word;       /* Memastikan kata yang sangat panjang tidak merusak layout */
+    
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important; 
+    color: #000000 !important; 
+    line-height: 1.3; 
+    letter-spacing: -0.01em;      /* Sedikit merapatkan huruf agar lebih solid */
+}
+
+.cv-list { 
+    margin: 0; 
+    margin-top: 3px !important;
+    margin-bottom: 8px !important;
+    padding-left: 14px; 
+    list-style-type: none;
+    /* Tambahkan ini untuk memastikan kontainer stabil */
+    display: block; 
+    width: 100%;
+}
+
+.cv-list li::before { 
+    content: "•"; 
+    position: absolute; 
+    left: -12px; 
+    color: #000000 !important;
+    font-weight: bold; 
+}
+
+
+.cv-icon { width: 10pt; height: 10pt; color: #4f46e5; flex-shrink: 0; }
+.contact-item { display: flex; align-items: center; gap: 6px; font-size: 11pt; color: #475569; }
+
+
+/* Master Style Engine - Updated for Times New Roman & 11pt Base */
+[data-theme] .vessel { 
+    font-family: 'Times New Roman', Times, serif !important; 
+    font-size: 11pt !important;
+    color: #1e293b; 
+    line-height: 1.4 !important;
+}
+
+/* Memastikan semua elemen teks mengikuti aturan font & ukuran */
+[data-theme] .vessel p, 
+[data-theme] .vessel div, 
+[data-theme] .vessel span, 
+[data-theme] .vessel li,
+[data-theme] .contact-item span { 
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important; 
+}
+
+/* Menyeragamkan Section Title untuk semua tema */
+[data-theme] .section-title { 
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important; 
+    background: var(--bg, #f1f5f9) !important; 
+    color: var(--ct, #000000) !important; 
+    border-left: var(--bl, none) !important; 
+    border-bottom: var(--bb, none) !important;
+    border-radius: var(--rd, 0px) !important; 
+    padding: var(--pd, 4px 12px) !important;
+    text-transform: var(--tt, uppercase) !important; 
+    font-weight: bold !important;
+    letter-spacing: var(--ls, 0.5px);
+}
+
+/* Khusus Nama Lengkap di Header tetap dibuat lebih besar agar menonjol */
+[data-theme] .vessel h1 {
+    text-transform: uppercase !important;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 22pt !important; 
+    font-weight: bold !important;
+    margin-bottom: 4px !important;
+}
+
+/* Menghapus override font-family di masing-masing sub-tema agar tidak konflik */
+[data-theme^="ats"] { --f: 'Times New Roman', serif !important; --bg: transparent; --pd: 0; --ct: #000000; }
+[data-theme^="creative"] { --f: 'Times New Roman', serif !important; --pd: 6px 15px; --ct: #fff; }
+
+/* === 25 VARIASI ATS === */
+[data-theme^="ats"] { --bg: transparent; --pd: 0; --ct: #000000; }
+[data-theme^="ats"] .cv-icon { display: none !important; }
+
+[data-theme="ats-1"] { --f: serif; --bb: 2pt solid #000000; }
+[data-theme="ats-2"] { --f: 'Times New Roman', serif; --bb: 0.5pt solid #444; }
+[data-theme="ats-3"] { --f: sans-serif; --bb: 3px solid #1e40af; --ct: #1e40af; }
+[data-theme="ats-4"] { --bl: 6pt solid #000000; --pd: 0 0 0 10px; }
+[data-theme="ats-5"] { --bg: #000000; --ct: #fff; --pd: 4px 10px; }
+[data-theme="ats-6"] { --bb: 1px solid #cbd5e1; --ct: #475569; --tt: none; }
+[data-theme="ats-7"] { --bb: 4px double #000000; }
+[data-theme="ats-8"] { --f: 'Georgia', serif; --bb: 1px dotted #000000; --ls: 2px; }
+[data-theme="ats-9"] { --bl: 2px solid #6366f1; --ct: #6366f1; --pd: 0 10px; }
+[data-theme="ats-10"] { --bb: 2px solid #000000; --tt: none; font-style: italic; }
+[data-theme="ats-11"] { --f: sans-serif; --bb: 1px solid #000000; --ls: 1.5px; }
+[data-theme="ats-12"] { --bg: #f8fafc; --bb: 2px solid #334155; --pd: 5px; }
+[data-theme="ats-13"] { --ct: #1e3a8a; --bb: 2px solid #1e3a8a; }
+[data-theme="ats-14"] { --bl: 10px solid #e2e8f0; --pd: 0 15px; }
+[data-theme="ats-15"] { --f: serif; --tt: uppercase; border: 1px solid #000000; --pd: 5px; }
+[data-theme="ats-16"] { --bb: 0.25pt solid #000000; font-weight: 400 !important; }
+[data-theme="ats-17"] { --ls: 3px; --bb: 1px solid #000000; text-align: center; }
+[data-theme="ats-18"] { --ct: #1d4ed8; --bb: 1.5pt solid #1d4ed8; }
+[data-theme="ats-19"] { --f: 'Courier New', monospace; --bb: 1px solid #000000; }
+[data-theme="ats-20"] { --ct: #94a3b8; --bb: 1px solid #e2e8f0; }
+[data-theme="ats-21"] { --bg: #f1f5f9; --bl: 10px solid #334155; --pd: 5px 15px; }
+[data-theme="ats-22"] { --bb: 3pt solid #000000; --pd: 0 0 5px 0; }
+[data-theme="ats-23"] { --f: 'Arial', sans-serif; --bb: 1px solid #000000; --tt: lowercase; }
+[data-theme="ats-24"] { --bb: 2px dotted #475569; --ct: #475569; }
+[data-theme="ats-25"] { --bb: 5px solid #000000; --tt: uppercase; font-stretch: condensed; }
+
+/* === 25 VARIASI KREATIF === */
+[data-theme^="creative"] { --pd: 6px 15px; --ct: #fff; }
+
+[data-theme="creative-1"] { --bg: linear-gradient(90deg, #4f46e5, #818cf8); --rd: 8px; }
+[data-theme="creative-2"] { --bg: #1e293b; --rd: 4px; --bl: 8px solid #6366f1; }
+[data-theme="creative-3"] { --bg: #10b981; --rd: 25px; }
+[data-theme="creative-4"] { --bg: #f43f5e; --rd: 0 20px 0 20px; }
+[data-theme="creative-5"] { --bg: #000000; --ct: #4ade80; --rd: 4px; --f: monospace; }
+[data-theme="creative-6"] { --bg: #f59e0b; --pd: 10px; --tt: lowercase; }
+[data-theme="creative-7"] { --bg: #0369a1; --bb: 5px solid #bae6fd; }
+[data-theme="creative-8"] { --bg: #db2777; --rd: 50px; text-align: center; }
+[data-theme="creative-9"] { --bg: #7c3aed; --bl: 15px solid #ddd6fe; }
+[data-theme="creative-10"] { --bg: #111827; --ct: #fbbf24; border: 1px solid #fbbf24 !important; }
+[data-theme="creative-11"] { --bg: #4ade80; --rd: 12px; --ct: #064e3b; }
+[data-theme="creative-12"] { --bg: #ec4899; box-shadow: 4px 4px 0 #500724; }
+[data-theme="creative-13"] { --bg: #14b8a6; --rd: 12px; border: 2px solid #0d9488 !important; }
+[data-theme="creative-14"] { --bg: #f97316; --rd: 0 0 15px 15px; }
+[data-theme="creative-15"] { --bg: #475569; --bl: 10px solid #94a3b8; }
+[data-theme="creative-16"] { --bg: #2563eb; --rd: 30px 0 30px 0; }
+[data-theme="creative-17"] { --bg: #be185d; --bb: 3px dashed #fce7f3; }
+[data-theme="creative-18"] { --bg: #0d9488; box-shadow: -5px 5px 0 #99f6e4; }
+[data-theme="creative-19"] { --bg: #3f6212; --rd: 5px; --ct: #d9f99d; }
+[data-theme="creative-20"] { --bg: #8b5cf6; --bl: 20px solid #4c1d95; }
+[data-theme="creative-21"] { --bg: linear-gradient(to right, #f97316, #ef4444); --rd: 4px; }
+[data-theme="creative-22"] { --bg: #334155; --rd: 2px; border-left: 10px solid #f1f5f9 !important; }
+[data-theme="creative-23"] { --bg: #1d4ed8; --rd: 0 50px 50px 0; }
+[data-theme="creative-24"] { --bg: #ef4444; --bl: 5px solid #000000; }
+[data-theme="creative-25"] { --bg: #000000; --ct: #fff; --ls: 5px; text-align: center; }
+
+/* Memaksa semua teks di area header identitas */
+.contact-item, 
+.contact-item span, 
+.vessel > div {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+}
+
+/* Jika Anda ingin menghilangkan icon agar lebih formal sesuai font serif */
+.cv-icon {
+    display: none !important;
+}
+
+
+/* Update di style.css */
+.cv-profile-text {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    color: #000000 !important;
+    text-align: justify;
+    
+    /* Solusi Spasi Melebar */
+    text-justify: inter-character; /* Mendistribusikan spasi antar karakter agar lebih rapat */
+    hyphens: auto;                /* Memotong kata panjang secara otomatis dengan tanda hubung (-) */
+    word-break: break-word;       /* Mencegah kata meluap dari garis */
+    
+    line-height: 1.4;
+    letter-spacing: normal;      /* Sedikit merapatkan huruf untuk tampilan lebih solid */
+    margin-bottom: 10px;
+}
+
+/* Styling Tombol Layout di Sidebar */
+.layout-btn {
+    border-color: #e2e8f0;
+    background: #fff;
+    cursor: pointer;
+}
+.layout-btn.active {
+    border-color: #4f46e5 !important;
+    background: #f5f3ff !important;
+}
+.layout-btn.active span {
+    color: #4f46e5;
+}
+
+/* Paksa semua teks di preview tetap Times New Roman 11pt */
+.vessel, .cv-profile-text, .cv-list li, .contact-item span {
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    color: #000000;
+}
+
+/* Reset margin untuk surat agar tetap full width */
+.surat-page .vessel {
+    display: block;
+}
+
+/* Tambahkan ini di style.css untuk memaksa warna hitam pada surat */
+.surat-page .vessel, 
+.surat-page .vessel div, 
+.surat-page .vessel b {
+    color: #000000 !important;
+}
+/* Modern Mobile Navigation */
+.mobile-nav {
+    display: none; /* Default hidden, flex on mobile via JS */
+}
+
+.mobile-nav-btn {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    height: 100%;
+    gap: 4px;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #94a3b8;
+    border-radius: 16px;
+}
+
+.nav-icon-wrapper {
+    padding: 6px 16px;
+    border-radius: 20px;
+    transition: all 0.3s ease;
+}
+
+.nav-text {
+    font-size: 10px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* State Aktif */
+.mobile-nav-btn.active-mobile {
+    color: #4f46e5;
+}
+
+.mobile-nav-btn.active-mobile .nav-icon-wrapper {
+    background: #4f46e5;
+    color: white;
+    box-shadow: 0 8px 15px rgba(79, 70, 229, 0.25);
+    transform: translateY(-2px);
+}
+
+.mobile-nav-btn.active-mobile .nav-text {
+    color: #4f46e5;
+}
+
+/* Animasi klik (haptic-like) */
+.mobile-nav-btn:active {
+    transform: scale(0.92);
+}
+
+@media (max-width: 1024px) {
+    .mobile-nav { 
+        display: flex !important; 
+    }
+}
+
+/* Navigasi Tab Profesional */
+.nav-btn-pro {
+    position: relative;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    font-size: 9px;
+    font-weight: 800;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: color 0.3s ease;
+    z-index: 10;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+}
+
+.nav-btn-pro i {
+    transition: transform 0.3s ease;
+}
+
+.nav-btn-pro.active {
+    color: #4f46e5;
+}
+
+.nav-btn-pro.active i {
+    transform: translateY(-1px);
+    color: #4f46e5;
+}
+
+.nav-btn-pro:hover:not(.active) {
+    color: #1e293b;
+}
+
+/* Styling Tombol Demo Profesional */
+#demo-toggle-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+/* Efek cahaya lewat saat hover */
+#demo-toggle-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 20%;
+    height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(30deg);
+    transition: all 0.6s;
+}
+
+#demo-toggle-btn:hover::after {
+    left: 120%;
+}
+
+/* Warna khusus saat status Hapus (Danger Mode) */
+.demo-active-mode {
+    background-color: #e11d48 !important; /* Rose 600 */
+}
+
+/* Card & Button Enhancements */
+.layout-btn.active {
+    border-color: #4f46e5 !important;
+    background: #ffffff !important;
+    box-shadow: 0 10px 20px -5px rgba(79, 70, 229, 0.1);
+    transform: translateY(-2px);
+}
+
+#demo-template-btn {
+    position: relative;
+    overflow: hidden;
+}
+
+#demo-template-btn::after {
+    content: '';
+    position: absolute;
+    top: -50%; left: -60%; width: 20%; height: 200%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: rotate(30deg);
+    transition: 0.6s;
+}
+
+#demo-template-btn:hover::after {
+    left: 120%;
+}
+
+/* Tab Template specific rounded corners */
+#tab-template {
+    padding-bottom: 40px;
+}
+/* Update di style.css */
+
+/* Modal Backdrop */
+#crop-modal {
+    transition: opacity 0.3s ease;
+}
+
+/* Container utama modal */
+.modal-content-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 600px;
+    background: white;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    overflow: hidden;
+}
+
+/* Mobile Fullscreen Logic */
+@media (max-width: 767px) {
+    .modal-content-wrapper {
+        height: 100%;
+        max-width: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .modal-content-wrapper {
+        height: auto;
+        max-height: 90vh;
+        border-radius: 24px;
+    }
+}
+
+/* Area Gambar */
+.crop-area-container {
+    position: relative;
+    background-color: #0f172a; /* Slate 900 */
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    min-height: 300px;
+}
+
+/* Memperbaiki tampilan Cropper.js agar lebih modern */
+.cropper-view-box {
+    outline: 2px solid #4f46e5;
+    outline-color: rgba(79, 70, 229, 0.7);
+}
+
+.cropper-face {
+    background-color: transparent;
+}
+
+/* Handle Bulat agar lebih mobile friendly */
+.cropper-point {
+    width: 12px !important;
+    height: 12px !important;
+    background-color: #4f46e5 !important;
+    opacity: 1 !important;
+}
+
+@media (max-width: 767px) {
+    .cropper-point {
+        width: 20px !important; /* Lebih besar di mobile */
+        height: 20px !important;
+        border: 3px solid white;
+        border-radius: 50%;
+    }
+}
+
+/* Watermark Design */
+.watermark {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(-35deg);
+    font-size: 80px;
+    font-weight: 900;
+    color: rgba(0, 0, 0, 0.07); /* Sangat tipis */
+    white-space: nowrap;
+    pointer-events: none;
+    z-index: 1000;
+    user-select: none;
+    display: none; /* Sembunyikan default */
+}
+
+@media print {
+    /* Memaksa ukuran kertas A4 murni */
+    @page {
+        size: A4;
+        margin: 0 !important; /* Menghilangkan margin default browser */
+    }
+
+    html, body {
+        width: 210mm !important;
+        height: 297mm !important;
+        background: #fff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        -webkit-print-color-adjust: exact !important; /* Memastikan warna keluar */
+        print-color-adjust: exact !important;
+    }
+
+    /* Sembunyikan elemen UI */
+    #editor-controls, .mobile-nav, .fixed, .nav-tabs-container, 
+    button, #download-modal, .absolute {
+        display: none !important;
+    }
+
+    /* Memastikan Preview Pane tidak memiliki padding saat print */
+    .preview-pane {
+        display: block !important;
+        position: static !important;
+        width: 210mm !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        background: white !important;
+        overflow: visible !important;
+    }
+
+    /* Paksa setiap halaman tetap pada dimensinya */
+    .page {
+        zoom: 1 !important; 
+        width: 210mm !important;
+        height: 297mm !important;
+        margin: 0 !important;
+        padding: 0 !important; /* Gunakan padding di dalam .vessel saja */
+        page-break-after: always !important;
+        position: relative !important;
+        box-shadow: none !important;
+    }
+
+    /* Margin konten diatur di sini agar konsisten */
+    .cv-page {
+        padding: 10mm 18mm 18mm 18mm !important; 
+    }
+
+    .surat-page {
+        padding: 25mm 25mm 25mm 25mm !important; 
+    }
+}
+
+
+@keyframes pulse-indigo {
+    0%, 100% { background-color: #f8fafc; }
+    50% { background-color: #e0e7ff; }
+}
+
+.animate-pulse {
+    animation: pulse-indigo 1s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    color: #4f46e5 !important;
+    font-style: italic;
+}
+
+.sub-title-italic {
+    font-weight: normal !important; /* Gunakan 600 agar lebih tegas (Semi-Bold) */
+    font-style: italic;
+    font-family: 'Times New Roman', Times, serif !important;
+    font-size: 11pt !important;
+    color: #000000 !important; /* Hitam pekat */
+    opacity: 1 !important;   /* Memastikan tidak ada efek transparan */
+}
+
+vessel div[style*="background: #f5f3ff"] {
+    font-size: 11pt !important;
+    padding: 2px 8px !important;
+}
+
+.card-item {
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    max-height: 1000px; /* Tinggi maksimal saat terbuka */
+    overflow: hidden;
+    position: relative;
+}
+
+/* Keadaan tertutup yang ringkas */
+.card-minimized {
+max-height: 52px !important;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    cursor: pointer;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+}
+
+.card-minimized:hover {
+    border-color: #4f46e5;
+    background: #f5f3ff;
+}
+.card-minimized > *:not(.header-nav) {
+    display: none !important;
+}
+/* Sembunyikan elemen kecuali judul instansi saat minimized */
+.card-minimized .input-ui:not(:first-child),
+.card-minimized textarea,
+.card-minimized button,
+.card-minimized .input-desc,
+.card-minimized label,
+.card-minimized .grid {
+    display: none !important;
+}
+
+/* Styling judul instansi saat minimized */
+.card-minimized input:first-child {
+    border: none !important;
+    background: transparent !important;
+    font-size: 0.8rem !important;
+    color: #1e293b !important;
+    pointer-events: none;
+    margin: 0 !important;
+    padding: 0 0 0 5px !important;
+    display: none !important;
+}
+
+/* style.css */
+.zen-section {
+    transition: all 0.3s ease;
+}
+
+.zen-section.collapsed {
+    opacity: 0.6;
+    max-height: 70px; /* Menyesuaikan tinggi header saja */
+    overflow: hidden;
+}
+
+.zen-section.active {
+    opacity: 1;
+    max-height: 3000px; /* Pastikan cukup tinggi untuk menampung semua list */
+}
+
+.chevron-icon {
+    transition: transform 0.3s ease;
+}
+
+.card-item {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    max-height: 1000px; 
+    overflow: hidden;
+}
+
+
+/* Memastikan judul seksi terlihat tegas namun rapi */
+.section-title {
+    margin-top: 15px !important;
+    margin-bottom: 8px !important;
+    padding-bottom: 2px !important;
+    border-bottom: 1.5pt solid #000000; /* Garis bawah elegan */
+    background: transparent !important;
+    border-left: none !important;
+    padding-left: 0 !important;
+}
+
+/* Penyesuaian area scroll agar tidak tertutup header yang baru */
+.scroll-area {
+    padding-top: 15px !important;
+}
+
+/* Transisi halus untuk tombol minimalis */
+.bg-slate-50 {
+    transition: all 0.2s ease;
+}
+
+/* Memastikan teks tombol tetap di satu baris */
+button span {
+    white-space: nowrap;
+}
+
+/* Slider Styling */
+input[type='range']::-webkit-slider-runnable-track {
+    background: #e2e8f0;
+    border-radius: 10px;
+    height: 6px;
+}
+
+input[type='range']::-webkit-slider-thumb {
+    margin-top: -5px;
+    width: 16px;
+    height: 16px;
+    background: #4f46e5;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Modal Animation */
+#download-modal {
+    transition: opacity 0.3s ease;
+}
+
+#download-modal.hidden {
+    display: none;
+    opacity: 0;
+}

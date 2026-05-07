@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SIFURA CV</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="vendor/css/cropper.min.css">
+    <link rel="stylesheet" href="style.css">
+
+<script src="vendor/js/tailwind.min.js"></script>
+<script src="vendor/js/lucide.min.js"></script>
+<script src="vendor/js/cropper.min.js"></script>
+<script src="vendor/js/jspdf.umd.min.js"></script>
+
+</head>
+<body class="flex flex-col lg:flex-row h-screen overflow-hidden">
+
+    <aside id="editor-controls" class="editor-sidebar">
+        <input type="hidden" id="cv-layout" value="1-col">
+    <div class="px-5 py-3 border-b border-slate-100 bg-white sticky top-0 z-20">
+    <div class="flex items-center gap-3">
+        <div class="shrink-0">
+            <h1 class="text-lg font-black tracking-tighter text-slate-900 leading-none">
+                SIFURA<span class="text-indigo-600">.CV</span>
+            </h1>
+        </div>
+
+        <div class="h-4 w-px bg-slate-200 mx-1"></div>
+
+        <div class="flex items-center gap-1.5 flex-1 justify-end">
+            <button onclick="resetData()" 
+                class="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg border border-slate-100 transition-all active:scale-90"
+                title="Reset">
+                <i data-lucide="refresh-cw" class="w-3 h-3"></i>
+            </button>
+
+            <button onclick="document.getElementById('import-file').click()" 
+                class="flex items-center gap-1.5 px-3 py-2 bg-slate-50 text-slate-600 rounded-lg text-[9px] font-black uppercase tracking-tight hover:bg-indigo-50 hover:text-indigo-600 transition-all border border-slate-100">
+                <i data-lucide="upload" class="w-3 h-3"></i>
+                <span>Impor</span>
+            </button>
+            <input type="file" id="import-file" class="hidden" accept=".sifura" onchange="importDataFromFile(this)">
+
+            <button onclick="exportDataToFile()" 
+                class="flex items-center gap-1.5 px-3 py-2 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-tight hover:bg-indigo-600 transition-all shadow-sm">
+                <i data-lucide="download" class="w-3 h-3"></i>
+                <span>Ekspor</span>
+            </button>
+        </div>
+    </div>
+</div>
+        
+     <nav class="nav-tabs-container p-4 bg-slate-50/50 border-b border-slate-100">
+    <div class="relative flex p-1 bg-slate-200/50 rounded-2xl backdrop-blur-sm">
+        <div id="nav-indicator" class="absolute top-1 bottom-1 left-1 bg-white rounded-xl shadow-sm transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] z-0" style="width: calc(25% - 2px);"></div>
+        
+        <button class="nav-btn-pro active" onclick="tab('template', this, 0)">
+            <i data-lucide="layout" class="w-3.5 h-3.5 mb-0.5"></i>
+            <span>Template</span>
+            
+        </button> 
+        <button class="nav-btn-pro" onclick="tab('data', this, 1)">
+            <i data-lucide="user-cog" class="w-3.5 h-3.5 mb-0.5"></i>
+            <span>CV Data</span>
+        </button>
+        <button class="nav-btn-pro" onclick="tab('surat', this, 2)">
+            <i data-lucide="mail" class="w-3.5 h-3.5 mb-0.5"></i>
+            <span>Surat</span>
+        </button>
+        <button class="nav-btn-pro" onclick="tab('berkas', this, 3)">
+            <i data-lucide="folder-open" class="w-3.5 h-3.5 mb-0.5"></i>
+            <span>Berkas</span>
+        </button>
+    </div>
+</nav>
+
+        <div class="scroll-area">
+           <div id="tab-data" class="hidden space-y-4">
+            <div class="flex items-center justify-between bg-white p-5 rounded-3xl mb-6 border border-slate-200 shadow-sm transition-all hover:border-indigo-200">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
+                <i data-lucide="file-check-2" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+                <span class="text-[10px] font-black uppercase text-indigo-900 tracking-widest block">Dokumen CV</span>
+                <p class="text-[9px] text-slate-400 font-bold uppercase">Aktifkan Halaman CV</p>
+            </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cv-toggle" class="sr-only peer" onchange="sync()">
+            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+        </label>
+    </div>
+
+<div class="bg-white p-5 rounded-[1.5rem] border border-slate-200 shadow-sm mb-6 transition-all hover:border-slate-300">
+    
+    <div class="flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-slate-50 rounded-full flex items-center justify-center border border-slate-100">
+                <i data-lucide="user" class="w-5 h-5 text-slate-400"></i>
+            </div>
+            <div>
+                <h3 class="text-[10px] font-black uppercase text-slate-800 tracking-wider"> Aktifkan Foto Profil</h3>
+                <p class="text-[9px] text-slate-400 font-medium tracking-tight">Format formal disarankan</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <div id="photo-dropzone" class="relative">
+                <input type="file" id="photo-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" onchange="handlePhoto(this)" accept="image/*">
+                <button class="flex items-center gap-2 bg-slate-900 text-white px-3 py-2 rounded-xl hover:bg-indigo-600 transition-all duration-300">
+                    <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                    <span class="text-[9px] font-black uppercase tracking-tighter">Pilih Foto</span>
+                </button>
+            </div>
+
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="photo-toggle" class="sr-only peer" onchange="sync()">
+                <div class="w-9 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-full"></div>
+            </label>
+        </div>
+    </div>
+
+    <div id="photo-status" class="hidden mt-4 pt-4 border-t border-slate-50 animate-in fade-in zoom-in duration-300">
+        <div class="flex items-center justify-between bg-slate-50 p-2.5 rounded-xl">
+            <div class="flex items-center gap-3 overflow-hidden">
+                <div class="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center shrink-0">
+                    <i data-lucide="image" class="w-4 h-4 text-indigo-600"></i>
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                    <span id="photo-filename" class="text-[10px] font-bold text-slate-700 truncate">dokumen-foto.jpg</span>
+                    <span class="text-[8px] font-medium text-indigo-500 uppercase tracking-tighter">File terpasang</span>
+                </div>
+            </div>
+            
+            <button onclick="removePhoto()" class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
+                <i data-lucide="x" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+</div>
+    <div id="zen-identity" class="zen-section collapsed bg-white p-6 rounded-3xl border border-slate-200 shadow-sm">
+        <div class="zen-header flex justify-between items-center cursor-pointer" onclick="toggleZen('zen-identity')">
+            <div class="flex items-center gap-3">
+                <i data-lucide="user" class="w-5 h-5 text-indigo-600"></i>
+                <h3 class="text-[10px] font-black uppercase text-slate-700 tracking-widest">Identitas & Profil</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon transition-transform"></i>
+        </div>
+
+        <div class="zen-content mt-6 space-y-5">
+            <div>
+                <label class="label !mt-0 !mb-1">Nama Lengkap</label>
+                <input type="text" id="in-name" class="input-ui !mb-0" placeholder="Contoh: Heri Ariyanto, S.Kom." oninput="sync()">
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>
+                   <label class="label !mt-0 !mb-1">Tempat Lahir</label>
+                   <input type="text" id="in-pob" class="input-ui !mb-0" placeholder="Pemalang" oninput="sync()">
+                </div>
+                <div>
+                    <label class="label !mt-0 !mb-1">Tanggal Lahir</label>
+                    <input type="date" id="in-dob" class="input-ui !mb-0" oninput="sync()">
+                </div>
+            </div>
+            <div class="grid grid-cols-3 gap-3">
+                <input type="number" id="in-tb" class="input-ui !mb-0" placeholder="Tinggi (cm)" oninput="sync()">
+                <input type="number" id="in-bb" class="input-ui !mb-0" placeholder="Berat (kg)" oninput="sync()">
+                <select id="in-status" class="input-ui !mb-0 bg-white" onchange="sync()">
+                    <option value="">Status</option>
+                    <option value="Belum Menikah">Lajang</option>
+                    <option value="Menikah">Menikah</option>
+                </select>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <input type="tel" id="in-wa" class="input-ui !mb-0" placeholder="WhatsApp" oninput="sync()">
+                <input type="email" id="in-email" class="input-ui !mb-0" placeholder="Email" oninput="sync()">
+            </div>
+            <textarea id="in-address" class="input-ui !mb-0 min-h-[80px]" rows="2" placeholder="Alamat Domisili..." oninput="sync()"></textarea>
+            <textarea id="in-about" class="input-ui !mb-0 min-h-[100px]" rows="3" placeholder="Profil Profesional..." oninput="sync()"></textarea>
+        </div>
+    </div>
+
+    <div id="zen-experience" class="zen-section collapsed bg-white p-6 rounded-3xl border border-slate-200 shadow-sm opacity-60">
+        <div class="zen-header flex justify-between items-center cursor-pointer" onclick="toggleZen('zen-experience')">
+            <div class="flex items-center gap-3">
+                <i data-lucide="briefcase" class="w-5 h-5 text-blue-500"></i>
+                <h3 class="text-[10px] font-black uppercase text-slate-700 tracking-widest">Pendidikan & Kerja</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+        </div>
+        <div class="zen-content hidden mt-6 space-y-8">
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <label class="label !mt-0">Pendidikan</label>
+                    <button class="bg-indigo-600 text-white w-8 h-8 rounded-xl shadow-lg shadow-indigo-100" onclick="add('edu')"><i data-lucide="plus" class="w-4 h-4 mx-auto"></i></button>
+                </div>
+                <div id="list-edu" class="space-y-3"></div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <label class="label !mt-0">Pengalaman Kerja</label>
+                    <button class="bg-indigo-600 text-white w-8 h-8 rounded-xl shadow-lg shadow-indigo-100" onclick="add('work')"><i data-lucide="plus" class="w-4 h-4 mx-auto"></i></button>
+                </div>
+                <div id="list-work" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="zen-extra" class="zen-section collapsed bg-white p-6 rounded-3xl border border-slate-200 shadow-sm opacity-60">
+        <div class="zen-header flex justify-between items-center cursor-pointer" onclick="toggleZen('zen-extra')">
+            <div class="flex items-center gap-3">
+                <i data-lucide="award" class="w-5 h-5 text-rose-500"></i>
+                <h3 class="text-[10px] font-black uppercase text-slate-700 tracking-widest">Organisasi & Sertifikasi</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+        </div>
+        <div class="zen-content hidden mt-6 space-y-8">
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <label class="label !mt-0">Organisasi</label>
+                    <button class="bg-indigo-600 text-white w-8 h-8 rounded-xl" onclick="add('org')"><i data-lucide="plus" class="w-4 h-4 mx-auto"></i></button>
+                </div>
+                <div id="list-org" class="space-y-3"></div>
+            </div>
+            <div>
+                <div class="flex justify-between items-center mb-3">
+                    <label class="label !mt-0">Sertifikasi & Pelatihan</label>
+                    <button class="bg-indigo-600 text-white w-8 h-8 rounded-xl" onclick="add('cert')"><i data-lucide="plus" class="w-4 h-4 mx-auto"></i></button>
+                </div>
+                <div id="list-cert" class="space-y-3"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="zen-skills" class="zen-section collapsed bg-white p-6 rounded-3xl border border-slate-200 shadow-sm opacity-60">
+        <div class="zen-header flex justify-between items-center cursor-pointer" onclick="toggleZen('zen-skills')">
+            <div class="flex items-center gap-3">
+                <i data-lucide="cpu" class="w-5 h-5 text-emerald-500"></i>
+                <h3 class="text-[10px] font-black uppercase text-slate-700 tracking-widest">Keahlian & Bahasa</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+        </div>
+        <div class="zen-content hidden mt-6 space-y-6">
+            <textarea id="in-skills" class="input-ui !mb-0 min-h-[100px]" rows="3" placeholder="Keahlian (per baris)..." oninput="sync()"></textarea>
+            <textarea id="in-langs" class="input-ui !mb-0 min-h-[80px]" rows="2" placeholder="Bahasa (per baris)..." oninput="sync()"></textarea>
+        </div>
+    </div>
+</div>
+<div id="tab-template" class="p-5 space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
+
+    <div class="bg-indigo-50/50 border border-indigo-100 rounded-[24px] p-5 relative group overflow-hidden">
+        <div class="flex items-start gap-4 relative z-10">
+            <div class="flex-1">
+                <h4 class="text-[11px] font-black text-indigo-900 uppercase tracking-wider mb-1">Eksplorasi Tanpa Batas</h4>
+                <p class="text-[10px] text-indigo-700/70 leading-relaxed mb-4 font-medium">
+                    Template saat ini masih kosong? Aktifkan <span class="text-indigo-900 font-bold">Data Simulasi</span> untuk memvisualisasikan struktur dokumen secara real-time.
+                </p>
+                
+                <button id="demo-template-btn" onclick="toggleDemoData()" 
+                    class="w-full py-3 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.15em] transition-all duration-300 flex items-center justify-center gap-2 shadow-lg shadow-indigo-200 hover:bg-indigo-700 active:scale-[0.98]">
+                    <i data-lucide="zap" class="w-3.5 h-3.5 fill-current"></i>
+                    <span id="demo-template-text">Aktifkan Preview Contoh</span>
+                </button>
+            </div>
+        </div>
+    </div>
+        <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+            <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
+                <i data-lucide="file-check" class="w-3 h-3"></i> 2. Gaya ATS Profesional (25)
+            </label>
+            <select id="cv-template-ats" class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none font-bold text-xs text-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all" onchange="updateTemplateSelection(this)">
+                <option value="ats-1">ATS 01: Harvard Executive</option>
+                <option value="ats-2">ATS 02: Oxford Serif</option>
+                <option value="ats-3">ATS 03: Modern Swiss</option>
+                <option value="ats-4">ATS 04: Minimalist Line</option>
+                <option value="ats-5">ATS 05: Bold Header</option>
+                <option value="ats-6">ATS 06: Slate Professional</option>
+                <option value="ats-7">ATS 07: Double Border</option>
+                <option value="ats-8">ATS 08: Compact Academic</option>
+                <option value="ats-9">ATS 09: Elegant Georgia</option>
+                <option value="ats-10">ATS 10: Legal Standard</option>
+                <option value="ats-11">ATS 11: Tech Clean</option>
+                <option value="ats-12">ATS 12: Business Simple</option>
+                <option value="ats-13">ATS 13: Classic Underline</option>
+                <option value="ats-14">ATS 14: Modern Sans</option>
+                <option value="ats-15">ATS 15: Deep Grey Serif</option>
+                <option value="ats-16">ATS 16: Thin Divider</option>
+                <option value="ats-17">ATS 17: Wide Spacing</option>
+                <option value="ats-18">ATS 18: Corporate Blue</option>
+                <option value="ats-19">ATS 19: Strict Formal</option>
+                <option value="ats-20">ATS 20: Light Professional</option>
+                <option value="ats-21">ATS 21: Solid Divider</option>
+                <option value="ats-22">ATS 22: High Scannable</option>
+                <option value="ats-23">ATS 23: Minimalist Sans</option>
+                <option value="ats-24">ATS 24: Standard Dot</option>
+                <option value="ats-25">ATS 25: Final Executive</option>
+            </select>
+        </div>
+
+        <div class="bg-white border border-slate-200 p-5 rounded-2xl shadow-sm">
+            <label class="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-slate-400 mb-4">
+                <i data-lucide="palette" class="w-3 h-3"></i> 3. Gaya Kreatif Modern (25)
+            </label>
+            <select id="cv-template-creative" class="w-full p-3 rounded-xl bg-slate-50 border border-slate-200 outline-none font-bold text-xs text-slate-700 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all" onchange="updateTemplateSelection(this)">
+                <option value="creative-1">Creative 01: Indigo Gradient</option>
+                <option value="creative-2">Creative 02: Midnight Sky</option>
+                <option value="creative-3">Creative 03: Emerald Soft</option>
+                <option value="creative-4">Creative 04: Rose Ribbon</option>
+                <option value="creative-5">Creative 05: Cyber Dark</option>
+                <option value="creative-6">Creative 06: Amber Glow</option>
+                <option value="creative-7">Creative 07: Ocean Deep</option>
+                <option value="creative-8">Creative 08: Pastel Mint</option>
+                <option value="creative-9">Creative 09: Royal Gold</option>
+                <option value="creative-10">Creative 10: Crimson Edge</option>
+                <option value="creative-11">Creative 11: Lavender Mist</option>
+                <option value="creative-12">Creative 12: Forest Green</option>
+                <option value="creative-13">Creative 13: Neon Tech</option>
+                <option value="creative-14">Creative 14: Sunny Orange</option>
+                <option value="creative-15">Creative 15: Soft Charcoal</option>
+                <option value="creative-16">Creative 16: Electric Blue</option>
+                <option value="creative-17">Creative 17: Berry Pink</option>
+                <option value="creative-18">Creative 18: Teal Modern</option>
+                <option value="creative-19">Creative 19: Dark Olive</option>
+                <option value="creative-20">Creative 20: Minimalist Purple</option>
+                <option value="creative-21">Creative 21: Sunset Hue</option>
+                <option value="creative-22">Creative 22: Professional Grey</option>
+                <option value="creative-23">Creative 23: Blue Wave</option>
+                <option value="creative-24">Creative 24: Clean White Red</option>
+                <option value="creative-25">Creative 25: Ultra Modern</option>
+            </select>
+        </div>
+    </div>
+
+
+    <input type="hidden" id="cv-template" value="ats-1">
+            
+            <div id="tab-surat" class="hidden space-y-4">
+    <div class="flex items-center justify-between bg-white p-5 rounded-3xl border border-slate-200 shadow-sm transition-all hover:border-indigo-200">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
+                <i data-lucide="mail-check" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+                <span class="text-[10px] font-black uppercase text-indigo-900 tracking-widest block">Dokumen Surat</span>
+                <p class="text-[9px] text-slate-400 font-bold uppercase">Aktifkan Halaman Surat</p>
+            </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="cl-toggle" class="sr-only peer" onchange="sync()">
+            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+        </label>
+    </div>
+
+        <div id="zen-surat-meta" class="zen-section collapsed bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden transition-all">
+        <div class="zen-header flex justify-between items-center p-5 cursor-pointer hover:bg-slate-50" onclick="toggleZen('zen-surat-meta')">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-xl">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-slate-600"></i>
+                </span>
+                <h3 class="text-[10px] font-black uppercase text-slate-800 tracking-widest"> Penerbitan</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+        </div>
+        
+        
+        <div class="zen-content px-6 pb-6 space-y-4">
+            <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 flex items-center justify-between">
+                <div>
+                    <p class="text-[10px] font-black text-slate-700 uppercase">Tanggal Otomatis</p>
+                    <p class="text-[9px] text-slate-400 font-bold">Gunakan tanggal hari ini di surat</p>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer scale-90">
+                    <input type="checkbox" id="cl-date-toggle" class="sr-only peer" onchange="sync()">
+                    <div class="w-10 h-5 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:after:translate-x-5"></div>
+                </label>
+            </div>
+            
+            <div class="space-y-1.5">
+                <label class="text-[10px] font-black text-slate-500 uppercase ml-1">Kota Penerbitan</label>
+                <input type="text" id="cl-city" class="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all outline-none" placeholder="Masukkan nama kota..." oninput="sync()">
+            </div>
+        </div>
+    </div>
+<div id="zen-surat-signature" class="zen-section collapsed bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden mt-4">
+    <div class="zen-header flex justify-between items-center p-5 cursor-pointer hover:bg-slate-50" onclick="toggleZen('zen-surat-signature')">
+        <div class="flex items-center gap-3">
+            <span class="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-xl">
+                <i data-lucide="pen-tool" class="w-4 h-4 text-slate-600"></i>
+            </span>
+            <h3 class="text-[10px] font-black uppercase text-slate-800 tracking-widest">Tanda Tangan Digital</h3>
+        </div>
+        <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+    </div>
+    
+    <div class="zen-content px-6 pb-6 space-y-4">
+        <div class="flex items-center justify-between p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+            <div>
+                <p class="text-[10px] font-black text-indigo-900 uppercase">Aktifkan Tanda Tangan</p>
+                <p class="text-[9px] text-indigo-600 font-bold uppercase">Tempel tanda tangan di surat</p>
+            </div>
+            <label class="relative inline-flex items-center cursor-pointer">
+                <input type="checkbox" id="cl-sig-toggle" class="sr-only peer" onchange="sync()">
+                <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+            </label>
+        </div>
+
+        <div class="relative group border-2 border-dashed border-slate-200 rounded-2xl p-4 text-center hover:border-indigo-400 transition-all">
+            <input type="file" id="sig-input" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" onchange="handleSignature(this)" accept="image/*">
+            <div class="flex flex-col items-center gap-2">
+                <i data-lucide="upload" class="w-5 h-5 text-slate-400 group-hover:text-indigo-600"></i>
+                <span class="text-[9px] font-black uppercase text-slate-500 group-hover:text-indigo-600">Upload Foto Tanda Tangan (Kertas Putih & Tinta Hitam)</span>
+                  <span class="text-[9px] font-bold text-slate-600">✓ pastikan crop terlebih dahulu parafnya</span>
+            </div>
+        </div>
+
+        <div id="sig-status" class="hidden flex items-center justify-between bg-slate-50 p-3 rounded-xl border">
+            <span class="text-[9px] font-bold text-slate-600">✓ Tanda tangan diproses</span>
+            <button onclick="removeSignature()" class="text-rose-500 p-1"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+        </div>
+    </div>
+</div>
+    <div id="zen-surat-body" class="zen-section collapsed bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden transition-all">
+        <div class="zen-header flex justify-between items-center p-5 cursor-pointer hover:bg-slate-50" onclick="toggleZen('zen-surat-body')">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 flex items-center justify-center bg-slate-100 rounded-xl">
+                    <i data-lucide="align-left" class="w-4 h-4 text-slate-600"></i>
+                </span>
+                <h3 class="text-[10px] font-black uppercase text-slate-800 tracking-widest">Isi Surat Lamaran</h3>
+            </div>
+            <i data-lucide="chevron-down" class="w-4 h-4 text-slate-400 chevron-icon"></i>
+        </div>
+
+        <div class="zen-content px-6 pb-6">
+            <div class="flex items-center justify-between mb-3 p-1 bg-slate-100 rounded-xl border border-slate-200">
+                <div class="flex gap-1">
+                    <button onclick="applyLetterTemplate(); event.stopPropagation();" 
+                            class="flex items-center gap-2 px-3 py-1.5 bg-white text-indigo-600 rounded-lg shadow-sm hover:bg-indigo-600 hover:text-white transition-all group">
+                        <i data-lucide="sparkles" class="w-3 h-3"></i>
+                        <span class="text-[9px] font-black uppercase tracking-tighter">AI Writer</span>
+                    </button>
+                </div>
+                
+                <button onclick="clearLetter(); event.stopPropagation();" 
+                        class="flex items-center gap-2 px-3 py-1.5 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all"
+                        title="Hapus Semua">
+                    <span class="text-[9px] font-bold uppercase">Kosongkan</span>
+                    <i data-lucide="trash-2" class="w-3 h-3"></i>
+                </button>
+            </div>
+
+            <textarea id="cl-body" 
+                class="w-full min-h-[400px] p-5 bg-slate-50/50 border border-slate-200 rounded-2xl text-[11px] leading-relaxed font-medium text-slate-700 focus:bg-white focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 transition-all outline-none resize-none" 
+                placeholder="Tuliskan isi surat Anda secara profesional..." 
+                oninput="sync()"></textarea>
+            
+            <div class="mt-4 flex items-center gap-3 p-3 bg-indigo-50/50 rounded-xl">
+                <i data-lucide="info" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <p class="text-[9px] text-indigo-600 font-bold leading-tight uppercase tracking-tight">Tips: Pastikan menyebutkan posisi yang dilamar dengan jelas.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+           <div id="tab-berkas" class="hidden">
+               <div class="flex items-center justify-between bg-white p-5 rounded-3xl mb-6 border border-slate-200 shadow-sm transition-all hover:border-indigo-100">
+        <div class="flex items-center gap-3">
+            <div class="bg-indigo-600 p-2.5 rounded-xl shadow-lg shadow-indigo-100">
+                <i data-lucide="layers" class="w-5 h-5 text-white"></i>
+            </div>
+            <div>
+                <span class="text-[10px] font-black uppercase text-indigo-900 tracking-widest block">Manajemen Lampiran</span>
+                <p class="text-[9px] text-slate-400 font-bold uppercase">Aktifkan Halaman Lampiran</p>
+            </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer">
+            <input type="checkbox" id="docs-toggle" class="sr-only peer" onchange="sync()">
+            <div class="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:bg-indigo-600 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:after:translate-x-full"></div>
+        </label>
+    </div>
+
+         <div class="bg-white border border-slate-200 rounded-2xl mb-4 overflow-hidden shadow-sm transition-all hover:shadow-md">
+    <div class="px-6 py-4 border-b border-slate-50 bg-slate-50/30">
+        <div class="flex items-center gap-3">
+            <div class="p-2 bg-indigo-600 rounded-xl shadow-sm shadow-indigo-100">
+                <i data-lucide="sparkles" class="w-4 h-4 text-white"></i>
+            </div>
+            <div>
+                <h3 class="text-[11px] font-black text-slate-800 uppercase tracking-widest">Smart Unggah Berkas Sekaligus</h3>
+                <p class="text-[10px] text-slate-500 font-medium leading-tight">AI mendeteksi dan mengelompokkan berkas secara otomatis.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="p-6">
+        <div class="relative group mb-6">
+            <input type="file" id="smart-upload" multiple class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-20" onchange="handleSmartUpload(this)">
+            <div class="border-2 border-dashed border-slate-200 rounded-2xl py-12 text-center group-hover:border-indigo-400 group-hover:bg-indigo-50/20 transition-all duration-300 relative">
+                <div class="w-12 h-12 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 group-hover:bg-white transition-all duration-300">
+                    <i data-lucide="upload-cloud" class="w-5 h-5 text-indigo-500"></i>
+                </div>
+                <p class="text-[11px] font-bold text-slate-700">Unggah Berkas Sekaligus</p>
+                <p class="text-[9px] text-slate-400 uppercase tracking-widest mt-1">PNG, JPG</p>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <div class="flex items-start gap-4">
+                <span class="flex-none w-5 h-5 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] flex items-center justify-center font-black">01</span>
+                <p class="text-[10px] text-slate-600 leading-relaxed">
+                    <span class="text-slate-900 font-bold block mb-0.5">Penamaan File Cerdas</span>
+                    Gunakan kata kunci, contoh: <span class="bg-indigo-50 text-indigo-700 px-1.5 py-0.5 rounded font-mono text-[9px] font-bold italic">"Ijazah_S1.pdf"</span>
+                </p>
+            </div>
+            <div class="flex items-start gap-4">
+                <span class="flex-none w-5 h-5 rounded-lg bg-indigo-50 text-indigo-600 text-[10px] flex items-center justify-center font-black">02</span>
+                <p class="text-[10px] text-slate-600 leading-relaxed">
+                    <span class="text-slate-900 font-bold block mb-0.5">Otomatisasi Sistem</span>
+                    Sistem memvalidasi dan memindahkan berkas ke kategori yang tepat.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex gap-3 mb-8">
+    <div class="flex-1 flex gap-2 bg-white border border-slate-200 p-1.5 rounded-2xl shadow-sm">
+        <input type="text" id="manual-file-name" 
+            class="flex-1 bg-transparent border-none text-[10px] font-bold px-3 outline-none placeholder:text-slate-400 uppercase tracking-tight" 
+            placeholder="Tambah kategori manual...">
+        <button onclick="addManualDoc()" class="bg-indigo-600 text-white w-9 h-9 rounded-xl hover:bg-indigo-700 active:scale-90 transition-all flex items-center justify-center shadow-sm">
+            <i data-lucide="plus" class="w-4 h-4"></i>
+        </button>
+    </div>
+
+    <button onclick="clearAllFiles()" class="flex items-center gap-2 px-5 bg-white border border-rose-100 text-rose-500 rounded-2xl hover:bg-rose-50 transition-all group">
+        <i data-lucide="trash-2" class="w-3.5 h-3.5 opacity-70 group-hover:opacity-100"></i>
+        <span class="text-[9px] font-black uppercase tracking-widest">Bersihkan</span>
+    </button>
+</div>
+
+<div class="px-1">
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+            <div class="w-1 h-3 bg-indigo-600 rounded-full"></div>
+            <span class="text-[11px] font-black text-slate-800 uppercase tracking-widest">Daftar Lampiran</span>
+        </div>
+        <div class="flex items-center gap-1.5 bg-slate-100 px-2 py-0.5 rounded-full">
+            <span class="text-[8px] text-slate-500 font-black uppercase tracking-tighter">Urutan Dokumen</span>
+        </div>
+    </div>
+    <div id="checklist-ui" class="space-y-3"></div>
+</div>
+
+<div id="unmatched-container" class="mt-10 hidden animate-in fade-in slide-in-from-bottom-4">
+    <div class="flex items-center gap-3 mb-3 px-1">
+        <div class="bg-rose-100 p-1 rounded">
+            <i data-lucide="alert-circle" class="w-3 h-3 text-rose-600"></i>
+        </div>
+        <span class="text-[10px] font-black uppercase text-rose-600 tracking-widest">Berkas Tidak Teridentifikasi</span>
+        <div class="h-px flex-1 bg-rose-100/50"></div>
+    </div>
+    <div id="unmatched-list" class="space-y-2 bg-rose-50/30 p-4 rounded-2xl border border-rose-100/60 backdrop-blur-sm"></div>
+    <p class="text-[9px] text-rose-400 mt-3 px-2 italic font-medium leading-relaxed">
+        * File ini diabaikan karena nama tidak sesuai dengan kata kunci pada daftar lampiran.
+    </p>
+</div>
+    </aside>
+
+    <main id="preview-panel" class="preview-pane lg:flex"></main>
+
+    <nav class="mobile-nav fixed bottom-6 left-1/2 -translate-x-1/2 w-[90%] max-w-[400px] bg-white/80 backdrop-blur-xl border border-white/20 h-[70px] hidden justify-around items-center z-[100] px-2 rounded-[24px] shadow-[0_20px_50px_rgba(0,0,0,0.15)]">
+    
+    <button onclick="toggleMobileView('edit', this)" class="mobile-nav-btn active-mobile group">
+        <div class="nav-icon-wrapper">
+            <i data-lucide="pen-tool" class="w-5 h-5"></i>
+        </div>
+        <span class="nav-text">Editor</span>
+    </button>
+
+    <button onclick="toggleMobileView('prev', this)" class="mobile-nav-btn group">
+        <div class="nav-icon-wrapper">
+            <i data-lucide="eye" class="w-5 h-5"></i>
+        </div>
+        <span class="nav-text">Hasil</span>
+</button>
+</nav>
+<div class="watermark absolute inset-0 flex items-center justify-center pointer-events-none opacity-[0.08] rotate-[-35deg] select-none">
+    <h1 class="text-[80px] font-black tracking-tighter">SIFURA CV</h1>
+</div>
+<div class="fixed bottom-24 right-4 lg:bottom-8 lg:right-8 z-[100] scale-90 lg:scale-100">
+    <button onclick="openDownloadModal()" class="bg-indigo-600 text-white p-4 rounded-2xl shadow-xl flex items-center gap-3 hover:bg-indigo-700 transition-all active:scale-95">
+        <i data-lucide="file-down" class="w-5 h-5"></i>
+        <span class="font-black text-[10px] uppercase tracking-widest">Download PDF</span>
+    </button>
+</div>
+<div id="download-modal" class="fixed inset-0 z-[300] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-md"></div>
+    <div class="bg-white w-full max-w-md rounded-[32px] overflow-hidden shadow-2xl relative z-10 animate-in zoom-in duration-300">
+        <div class="p-8">
+            <div class="flex items-center gap-4 mb-6">
+                <div class="bg-indigo-600 p-3 rounded-2xl shadow-lg shadow-indigo-100">
+                    <i data-lucide="file-down" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h3 class="text-sm font-black uppercase tracking-widest text-slate-800">Unduh Dokumen</h3>
+                    <p class="text-[10px] text-slate-400 font-bold uppercase">Pilih kualitas output PDF</p>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <button onclick="triggerOriginalPrint()" class="w-full flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl hover:border-indigo-500 hover:bg-white transition-all group">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 group-hover:text-indigo-600">
+                            <i data-lucide="printer" class="w-5 h-5"></i>
+                        </div>
+                        <div class="text-left">
+                            <span class="block text-xs font-black text-slate-800">Download Kualitas Asli</span>
+                            <span class="text-[9px] text-slate-400 font-bold uppercase">Tanpa Kompresi (Ukuran Besar)</span>
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 text-slate-300"></i>
+                </button>
+
+                <div class="p-5 bg-indigo-50/50 border border-indigo-100 rounded-2xl space-y-4">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i data-lucide="settings-2" class="w-3.5 h-3.5 text-indigo-600"></i>
+                        <span class="text-[10px] font-black uppercase text-indigo-900 tracking-tighter">Kustom Kompresi</span>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-[9px] font-black uppercase text-slate-500 mb-2">
+                            <span>Kualitas Gambar</span>
+                            <span id="quality-label" class="text-indigo-600">10%</span>
+                        </div>
+                        <input type="range" id="compress-slider" min="5" max="100" value="10" 
+                               class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+                               oninput="document.getElementById('quality-label').innerText = this.value + '%'">
+                    </div>
+
+                    <div class="mt-4">
+    <div class="flex justify-between text-[9px] font-black uppercase text-slate-500 mb-2">
+        <span>Resolusi (DPI / Skala)</span>
+        <span id="dpi-label" class="text-indigo-600">10%</span>
+    </div>
+<input type="range" id="dpi-slider" min="10" max="100" value="10" 
+       class="w-full h-1.5 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
+       oninput="document.getElementById('dpi-label').innerText = this.value + '%'">
+</div>
+<div class="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-2xl">
+    <div class="flex items-center gap-2 mb-2">
+        <i data-lucide="help-circle" class="w-3.5 h-3.5 text-amber-600"></i>
+        <span class="text-[10px] font-black uppercase text-amber-900 tracking-tighter">Tips Target < 300KB</span>
+    </div>
+    <ul class="space-y-2">
+        <li class="text-[9px] text-amber-800 leading-relaxed font-medium">
+            <strong class="font-black text-amber-900">DPI 10% - 20%:</strong> Mengecilkan dimensi gambar secara ekstrem (Sangat ampuh menekan ukuran file).
+        </li>
+        <li class="text-[9px] text-amber-800 leading-relaxed font-medium">
+            <strong class="font-black text-amber-900">Kualitas 30% - 40%:</strong> Mengurangi ketajaman warna untuk mengoptimalkan memori dokumen.
+        </li>
+    </ul>
+</div>
+                    <button onclick="triggerCompressedPrint()" class="w-full py-3.5 bg-indigo-600 text-white rounded-xl text-[10px] font-black uppercase tracking-[0.15em] shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all">
+                        Download Dengan Kompresi
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="closeDownloadModal()" class="w-full mt-6 text-[10px] font-black uppercase text-slate-400 hover:text-rose-500 transition-colors">
+                Batal
+            </button>
+        </div>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+<div id="crop-modal" class="fixed inset-0 z-[500] hidden bg-slate-900/80 backdrop-blur-sm flex items-center justify-center">
+    <div class="modal-content-wrapper">
+        <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-white">
+            <h3 class="text-sm font-bold text-slate-800 uppercase tracking-widest">Atur Foto Profil</h3>
+            <button onclick="closeCropModal()" class="p-2 text-slate-400 hover:text-rose-500 transition-colors">
+                <i data-lucide="x" class="w-6 h-6"></i>
+            </button>
+        </div>
+
+        <div class="crop-area-container">
+            <img id="crop-image" style="display: block; max-width: 100%;">
+        </div>
+
+        <div class="p-6 bg-white border-t border-slate-50">
+            <div class="flex flex-col gap-4">
+                <div class="flex justify-center gap-4 text-slate-400">
+                    <button onclick="cropper.rotate(-90)" class="p-2 hover:bg-slate-100 rounded-lg"><i data-lucide="rotate-ccw"></i></button>
+                    <button onclick="cropper.zoom(0.1)" class="p-2 hover:bg-slate-100 rounded-lg"><i data-lucide="zoom-in"></i></button>
+                    <button onclick="cropper.zoom(-0.1)" class="p-2 hover:bg-slate-100 rounded-lg"><i data-lucide="zoom-out"></i></button>
+                    <button onclick="cropper.rotate(90)" class="p-2 hover:bg-slate-100 rounded-lg"><i data-lucide="rotate-cw"></i></button>
+                </div>
+                
+                <div class="flex gap-3">
+                    <button onclick="closeCropModal()" class="flex-1 py-4 bg-slate-100 text-slate-600 rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-slate-200 transition-all">
+                        Batal
+                    </button>
+                    <button onclick="executeCrop()" class="flex-[2] py-4 bg-indigo-600 text-white rounded-2xl text-xs font-bold uppercase tracking-widest hover:bg-indigo-700 shadow-lg shadow-indigo-200 transition-all active:scale-95">
+                        Terapkan
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</html>
