@@ -107,7 +107,7 @@ body {
     hyphens: auto;                /* Memotong kata secara otomatis dengan tanda hubung (-) */
     word-break: break-word;       /* Memastikan kata yang sangat panjang tidak merusak layout */
     
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important; 
     color: #000000 !important; 
     line-height: 1.3; 
@@ -140,7 +140,7 @@ body {
 
 /* Master Style Engine - Updated for Times New Roman & 11pt Base */
 [data-theme] .vessel { 
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; 
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important; 
     font-size: 11pt !important;
     color: #1e293b; 
     line-height: 1.4 !important;
@@ -152,13 +152,13 @@ body {
 [data-theme] .vessel span, 
 [data-theme] .vessel li,
 [data-theme] .contact-item span { 
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important; 
 }
 
 /* Menyeragamkan Section Title untuk semua tema */
 [data-theme] .section-title { 
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important; 
     background: var(--bg, #f1f5f9) !important; 
     color: var(--ct, #000000) !important; 
@@ -174,7 +174,7 @@ body {
 /* Khusus Nama Lengkap di Header tetap dibuat lebih besar agar menonjol */
 [data-theme] .vessel h1 {
     text-transform: uppercase !important;
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 22pt !important; 
     font-weight: bold !important;
     margin-bottom: 4px !important;
@@ -247,7 +247,7 @@ body {
 .contact-item, 
 .contact-item span, 
 .vessel > div {
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important;
     line-height: 1.4 !important;
 }
@@ -260,7 +260,7 @@ body {
 
 /* Update di style.css */
 .cv-profile-text {
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important;
     color: #000000 !important;
     text-align: justify;
@@ -291,7 +291,7 @@ body {
 
 /* Paksa semua teks di preview tetap Times New Roman 11pt */
 .vessel, .cv-profile-text, .cv-list li, .contact-item span {
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important;
     color: #000000;
 }
@@ -622,7 +622,7 @@ body {
 .sub-title-italic {
     font-weight: normal !important; /* Gunakan 600 agar lebih tegas (Semi-Bold) */
     font-style: italic;
-    font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important;
+    font-family: 'Tinos', 'Times New Roman', Times, serif !important;
     font-size: 11pt !important;
     color: #000000 !important; /* Hitam pekat */
     opacity: 1 !important;   /* Memastikan tidak ada efek transparan */

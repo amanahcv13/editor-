@@ -168,7 +168,7 @@ function formatAlamatOtomatis(text) {
 
 function titleCase(str) {
     if (!str || typeof str !== 'string') return "";
-    str = str.replace(/\s*-\s*/g, " - ");
+    
     // Daftar kata yang harus tetap Kapital Penuh (Upper Case)
     const upperExceptions = [
         "SD", "SDN", "SMP", "SMPN", "SMA", "SMAN", "SMK", "SMKN", "MAN", "MTS", "MA",
@@ -179,24 +179,30 @@ function titleCase(str) {
     const lowercaseExceptions = ["dan", "di", "atau", "ke", "dari", "pada", "dalam", "dengan"];
     
     return str.split(' ').map((word, index) => {
-       if (word.length === 0) return "";
+        if (word.length === 0) return "";
 
+        // Bersihkan tanda baca untuk pengecekan kata kunci
         const cleanWord = word.toUpperCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
 
+        // 1. Jika kata ada dalam daftar pengecualian Kapital Penuh
         if (upperExceptions.includes(cleanWord)) {
             return word.toUpperCase();
         }
 
+        // 2. Jika kata adalah singkatan teknis buatan user (Contoh: "TKJ", "CNC")
+        // Logika: Jika lebih dari 1 huruf dan semuanya huruf besar
         if (word.length > 1 && word === word.toUpperCase()) {
             return word;
         }
 
         const lowerCleanWord = word.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()]/g, "");
 
+        // 3. Pengecualian kata sambung (tetap kecil jika bukan di awal kalimat)
         if (index > 0 && lowercaseExceptions.includes(lowerCleanWord)) {
             return word.toLowerCase();
         }
 
+        // 4. Standar: Huruf depan besar, sisanya kecil
         return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
     }).join(' ');
 }
@@ -935,10 +941,10 @@ async function sync() {
             <div id="cv-header-section" style="display:flex; ${isPhotoActive ? 'flex-direction:row;' : 'flex-direction:column;'} align-items:center; gap:25px; margin-bottom:20px; width:100%;">
                 ${isPhotoActive ? `<div style="width:30mm; height:40mm; background:#fafafa; border:1px solid #eee; overflow:hidden; flex-shrink:0;">${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover">` : ''}</div>` : ''}
                 <div style="flex:1; display:flex; flex-direction:column; ${isPhotoActive ? 'text-align:left; align-items:flex-start' : 'text-align:center; align-items:center'}; width:100%;">
-                    <h1 style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
-                    <div style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
+                    <h1 style="font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
+                    <div style="font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
                     <div style="display:flex; flex-direction:column; gap:4px; ${isPhotoActive ? 'align-items:flex-start' : 'align-items:center'};">
-                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:11pt !important; color:#000000;">
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:11pt !important; color:#000000;">
                 ${document.getElementById('in-wa').value ? `<span>${document.getElementById('in-wa').value}</span>` : ''}
                 
                 ${document.getElementById('in-wa').value && document.getElementById('in-email').value ? `<span style="color:#94a3b8;">|</span>` : ''}
@@ -1058,7 +1064,7 @@ if (document.getElementById('docs-toggle').checked) {
                 ${displayFiles.map(file => `
                     <div style="display: flex; flex-direction: column; gap: 10px; width: ${cardWidth}; max-width: 100%;">
                         ${total > 1 ? `
-                            <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
+                            <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
                                 ${file.label}
                             </span>
                         ` : ''}
@@ -1086,7 +1092,7 @@ if (document.getElementById('docs-toggle').checked) {
             </div>
 
             <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
@@ -1113,7 +1119,7 @@ if (document.getElementById('docs-toggle').checked) {
                     </div>
                     
                      <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
