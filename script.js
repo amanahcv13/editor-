@@ -935,10 +935,10 @@ async function sync() {
             <div id="cv-header-section" style="display:flex; ${isPhotoActive ? 'flex-direction:row;' : 'flex-direction:column;'} align-items:center; gap:25px; margin-bottom:20px; width:100%;">
                 ${isPhotoActive ? `<div style="width:30mm; height:40mm; background:#fafafa; border:1px solid #eee; overflow:hidden; flex-shrink:0;">${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover">` : ''}</div>` : ''}
                 <div style="flex:1; display:flex; flex-direction:column; ${isPhotoActive ? 'text-align:left; align-items:flex-start' : 'text-align:center; align-items:center'}; width:100%;">
-                    <h1 style="font-family: 'Times New Roman', serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
-                    <div style="font-family: 'Times New Roman', serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
+                    <h1 style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
+                    <div style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
                     <div style="display:flex; flex-direction:column; gap:4px; ${isPhotoActive ? 'align-items:flex-start' : 'align-items:center'};">
-                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: 'Times New Roman', serif !important; font-size:11pt !important; color:#000000;">
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif !important; font-size:11pt !important; color:#000000;">
                 ${document.getElementById('in-wa').value ? `<span>${document.getElementById('in-wa').value}</span>` : ''}
                 
                 ${document.getElementById('in-wa').value && document.getElementById('in-email').value ? `<span style="color:#94a3b8;">|</span>` : ''}
@@ -1058,7 +1058,7 @@ if (document.getElementById('docs-toggle').checked) {
                 ${displayFiles.map(file => `
                     <div style="display: flex; flex-direction: column; gap: 10px; width: ${cardWidth}; max-width: 100%;">
                         ${total > 1 ? `
-                            <span style="font-family: 'Times New Roman', serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
+                            <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
                                 ${file.label}
                             </span>
                         ` : ''}
@@ -1086,7 +1086,7 @@ if (document.getElementById('docs-toggle').checked) {
             </div>
 
             <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Times New Roman', serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
@@ -1113,7 +1113,7 @@ if (document.getElementById('docs-toggle').checked) {
                     </div>
                     
                      <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Times New Roman', serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: 'Calibri', 'Candara', 'Segoe', 'Segoe UI', 'Optima', 'Arial', sans-serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
