@@ -8,16 +8,18 @@ let docs = [
     { id: 2, label: "CV / Daftar Riwayat Hidup", files: [], checked: true, isSystemGenerated: true },
     { id: 3, label: "KTP", files: [], checked: true },
     { id: 4, label: "NPWP", files: [], checked: true },
-    { id: 5, label: "Surat Keterangan Dokter", files: [], checked: true },
-    { id: 6, label: "Ijazah", files: [], checked: true },
-    { id: 7, label: "Transkrip Nilai", files: [], checked: true },
-    { id: 8, label: "SKCK", files: [], checked: true },
-    { id: 9, label: "Akta Kelahiran", files: [], checked: true },
-    { id: 10, label: "Kartu Keluarga", files: [], checked: true },
-    { id: 11, label: "Kartu Tanda Pencari Kerja / AK1", files: [], checked: true },
-    { id: 12, label: "Paklaring", files: [], checked: true },
-    { id: 13, label: "Sertifikat Vaksin Covid-19", files: [], checked: true },
-    { id: 14, label: "SIM C", files: [], checked: true }
+    { id: 5, label: "SIM C", files: [], checked: true },
+    { id: 6, label: "Surat Keterangan Dokter", files: [], checked: true },
+    { id: 7, label: "Ijazah", files: [], checked: true },
+    { id: 8, label: "SKHUN", files: [], checked: true },
+    { id: 9, label: "Transkrip Nilai", files: [], checked: true },
+    { id: 10, label: "SKCK", files: [], checked: true },
+    { id: 11, label: "Akta Kelahiran", files: [], checked: true },
+    { id: 12, label: "Kartu Keluarga", files: [], checked: true },
+    { id: 13, label: "Kartu Tanda Pencari Kerja / AK1", files: [], checked: true },
+    { id: 14, label: "Paklaring", files: [], checked: true },
+    { id: 15, label: "Sertifikat Pendukung", files: [], checked: true },
+    { id: 16, label: "Sertifikat Vaksin Covid-19", files: [], checked: true }
 ];
 
 let signatureData = null; // Variabel global baru
@@ -384,12 +386,29 @@ function clearAllFiles() {
 }
 
 
+// script.js
 function toggleMobileView(m, btn) {
     document.querySelectorAll('.mobile-nav button').forEach(b => b.classList.remove('active-mobile'));
     btn.classList.add('active-mobile');
-    const e = document.getElementById('editor-controls'), p = document.getElementById('preview-panel');
-    if (m === 'edit') { e.style.display = 'flex'; p.style.display = 'none'; }
-    else { e.style.display = 'none'; p.style.display = 'flex'; sync(); }
+    
+    const e = document.getElementById('editor-controls');
+    const p = document.getElementById('preview-panel');
+    const dlBtn = document.getElementById('floating-download');
+
+    if (m === 'edit') {
+        // Mode Editor
+        e.style.display = 'flex';
+        p.style.display = 'none';
+        // Tambahkan class hidden jika kembali ke editor
+        if (dlBtn) dlBtn.classList.add('hidden');
+    } else {
+        // Mode Hasil (Preview)
+        e.style.display = 'none';
+        p.style.display = 'flex';
+        // Hapus class hidden agar tombol muncul
+        if (dlBtn) dlBtn.classList.remove('hidden');
+        sync();
+    }
     lucide.createIcons();
 }
 
@@ -941,10 +960,10 @@ async function sync() {
             <div id="cv-header-section" style="display:flex; ${isPhotoActive ? 'flex-direction:row;' : 'flex-direction:column;'} align-items:center; gap:25px; margin-bottom:20px; width:100%;">
                 ${isPhotoActive ? `<div style="width:30mm; height:40mm; background:#fafafa; border:1px solid #eee; overflow:hidden; flex-shrink:0;">${photo ? `<img src="${photo}" style="width:100%; height:100%; object-fit:cover">` : ''}</div>` : ''}
                 <div style="flex:1; display:flex; flex-direction:column; ${isPhotoActive ? 'text-align:left; align-items:flex-start' : 'text-align:center; align-items:center'}; width:100%;">
-                    <h1 style="font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
-                    <div style="font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
+                    <h1 style="font-family: Tinos, serif !important; font-size:24pt !important; font-weight:bold; margin-bottom:4px; color:#000000;">${nameVal || ''}</h1>
+                    <div style="font-family: Tinos, serif !important; font-size:11pt !important; color:#000000; margin-bottom:8px;">${infoParts.join(' • ')}</div>
                     <div style="display:flex; flex-direction:column; gap:4px; ${isPhotoActive ? 'align-items:flex-start' : 'align-items:center'};">
-                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: 'Tinos', 'Times New Roman', Times, serif !important; font-size:11pt !important; color:#000000;">
+                        <div style="display:flex; flex-wrap:wrap; gap:10px; ${isPhotoActive ? '' : 'justify-content:center'}; align-items:center; font-family: Tinos, serif !important; font-size:11pt !important; color:#000000;">
                 ${document.getElementById('in-wa').value ? `<span>${document.getElementById('in-wa').value}</span>` : ''}
                 
                 ${document.getElementById('in-wa').value && document.getElementById('in-email').value ? `<span style="color:#94a3b8;">|</span>` : ''}
@@ -1064,7 +1083,7 @@ if (document.getElementById('docs-toggle').checked) {
                 ${displayFiles.map(file => `
                     <div style="display: flex; flex-direction: column; gap: 10px; width: ${cardWidth}; max-width: 100%;">
                         ${total > 1 ? `
-                            <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
+                            <span style="font-family: Tinos, serif; font-size: 10pt; font-weight: bold; text-transform: uppercase; text-align: center; display: block; color: #64748b;">
                                 ${file.label}
                             </span>
                         ` : ''}
@@ -1092,7 +1111,7 @@ if (document.getElementById('docs-toggle').checked) {
             </div>
 
             <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: Tinos, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
@@ -1119,7 +1138,7 @@ if (document.getElementById('docs-toggle').checked) {
                     </div>
                     
                      <div style="margin-top: auto; padding-top: 20px; text-align: right;">
-                <span style="font-family: 'Tinos', 'Times New Roman', Times, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
+                <span style="font-family: Tinos, serif; font-size: 8pt; color: #94a3b8; font-style: italic;">
                      Dokumen Lampiran - ${titleCase(nameVal)}
                 </span>
             </div>
@@ -1551,34 +1570,45 @@ async function exportDataToFile() {
 async function importDataFromFile(input) {
     if (!input.files || !input.files[0]) return;
 
+    const file = input.files[0];
     const reader = new FileReader();
+
     reader.onload = async function(e) {
         try {
-            // 1. Ambil string Base64 dan Decode kembali ke JSON
-            const decodedString = decodeURIComponent(escape(atob(e.target.result)));
-            const d = JSON.parse(decodedString);
+            let dataRaw = e.target.result;
+            let d;
 
-            if (!d.store || !d.inputs) throw new Error("Format file tidak dikenali.");
+            // Logika Deteksi: Jika file .json biasanya teks biasa, 
+            // sedangkan .sifura yang kamu buat menggunakan Base64 (btoa)
+            if (file.name.endsWith('.json')) {
+                d = JSON.parse(dataRaw);
+            } else {
+                // Asumsi file .sifura menggunakan encoding Base64 seperti di fungsi export kamu
+                const decodedString = decodeURIComponent(escape(atob(dataRaw)));
+                d = JSON.parse(decodedString);
+            }
 
-            // 2. Pulihkan data
+            if (!d.store || !d.inputs) throw new Error("Struktur data tidak valid.");
+
+            // --- PROSES PEMULIHAN DATA (Tetap sama dengan kode sebelumnya) ---
             store = d.store;
             photo = d.photoData || null;
-            signatureData = d.signatureData || null; // Memulihkan variabel tanda tangan
+            signatureData = d.signatureData || null;
 
             if (d.docsList) {
                 for (let doc of d.docsList) {
-                    for (let file of doc.files) {
-                        if (file.data.startsWith('data:image')) {
-                            const res = await fetch(file.data);
+                    for (let fileObj of doc.files) {
+                        if (fileObj.data.startsWith('data:image')) {
+                            const res = await fetch(fileObj.data);
                             const blob = await res.blob();
-                            file.data = URL.createObjectURL(blob);
+                            fileObj.data = URL.createObjectURL(blob);
                         }
                     }
                 }
                 docs = d.docsList;
             }
 
-            // 3. Update UI & Input
+            // Update UI Input
             if (d.inputs) {
                 Object.entries(d.inputs).forEach(([id, value]) => {
                     let targetId = (id === 'letterBody') ? 'cl-body' : id;
@@ -1589,13 +1619,18 @@ async function importDataFromFile(input) {
                 });
             }
 
-            // 4. Pulihkan Toggles & Template
+            // Pulihkan Toggles
             if (d.toggles) {
-                document.getElementById('cv-toggle').checked = d.toggles.cv;
-                document.getElementById('photo-toggle').checked = d.toggles.photo;
-                document.getElementById('cl-toggle').checked = d.toggles.cl;
-                document.getElementById('cl-date-toggle').checked = d.toggles.clDate;
-                document.getElementById('docs-toggle').checked = d.toggles.docs;
+                const toggleIds = ['cv-toggle', 'photo-toggle', 'cl-toggle', 'cl-date-toggle', 'docs-toggle'];
+                toggleIds.forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        const key = id.replace('-toggle', '').replace('cl', 'cl').replace('cv', 'cv');
+                        // Menyesuaikan mapping key di d.toggles
+                        let val = d.toggles[key === 'cl-date' ? 'clDate' : key];
+                        el.checked = val ?? false;
+                    }
+                });
             }
 
             if (d.layout) updateLayout(d.layout);
@@ -1603,42 +1638,29 @@ async function importDataFromFile(input) {
                 document.getElementById('cv-template').value = d.template;
                 const ats = document.getElementById('cv-template-ats');
                 const crv = document.getElementById('cv-template-creative');
-                if (d.template.startsWith('ats')) { ats.value = d.template; crv.selectedIndex = -1; }
-                else { crv.value = d.template; ats.selectedIndex = -1; }
+                if (d.template.startsWith('ats')) { ats.value = d.template; if(crv) crv.selectedIndex = -1; }
+                else { if(crv) crv.value = d.template; ats.selectedIndex = -1; }
             }
 
-            // 5. Refresh UI List & Berkas
+            // Refresh UI
             renderLists('edu'); renderLists('work'); renderLists('org'); renderLists('cert');
             renderChecklist();
 
-            // 6. Tampilkan Status Foto Profil (jika ada)
             if (photo) {
                 document.getElementById('photo-status').classList.remove('hidden');
                 document.getElementById('photo-dropzone').classList.add('hidden');
             }
 
-            // 7. Logika Otomatisasi Tanda Tangan Digital
-            const sigToggle = document.getElementById('cl-sig-toggle');
-            const sigStatus = document.getElementById('sig-status');
-
-            if (signatureData) {
-                // Aktifkan Status Visual & Centang Toggle Secara Otomatis
-                if (sigStatus) sigStatus.classList.remove('hidden');
-                if (sigToggle) sigToggle.checked = true; 
-            } else {
-                if (sigStatus) sigStatus.classList.add('hidden');
-                if (sigToggle) sigToggle.checked = false;
-            }
-
             sync();
-            alert("Data Sifura Berhasil Dimuat!");
+            alert(`Data dari ${file.name} berhasil dimuat!`);
 
         } catch (err) {
             console.error(err);
-            alert("File rusak atau bukan format .sifura yang valid!");
+            alert("Gagal memuat file: Pastikan format file .json atau .sifura valid.");
         }
     };
-    reader.readAsText(input.files[0]);
+
+    reader.readAsText(file);
 }
 // 1. Ganti fungsi tombol download di HTML dari executePrint() menjadi openDownloadModal()
 function openDownloadModal() {
